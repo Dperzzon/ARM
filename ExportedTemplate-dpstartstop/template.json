@@ -1,0 +1,615 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "availabilitySets_ASss_name": {
+            "defaultValue": "ASss",
+            "type": "string"
+        },
+        "virtualMachines_dpss1_name": {
+            "defaultValue": "dpss1",
+            "type": "string"
+        },
+        "virtualNetworks_spvnet_name": {
+            "defaultValue": "spvnet",
+            "type": "string"
+        },
+        "networkInterfaces_dpss1248_name": {
+            "defaultValue": "dpss1248",
+            "type": "string"
+        },
+        "publicIPAddresses_dpss1_ip_name": {
+            "defaultValue": "dpss1-ip",
+            "type": "string"
+        },
+        "virtualNetworks_firewallvnet_name": {
+            "defaultValue": "firewallvnet",
+            "type": "string"
+        },
+        "networkSecurityGroups_dpss1_nsg_name": {
+            "defaultValue": "dpss1-nsg",
+            "type": "string"
+        },
+        "storageAccounts_dpstartstopdiag969_name": {
+            "defaultValue": "dpstartstopdiag969",
+            "type": "string"
+        },
+        "publicIPAddresses_azureFirewalls_ip_name": {
+            "defaultValue": "azureFirewalls-ip",
+            "type": "string"
+        },
+        "subnets_dpsubnet_name": {
+            "defaultValue": "dpsubnet",
+            "type": "string"
+        },
+        "securityRules_MongoDB_name": {
+            "defaultValue": "MongoDB",
+            "type": "string"
+        },
+        "subnets_AzureFirewallSubnet_name": {
+            "defaultValue": "AzureFirewallSubnet",
+            "type": "string"
+        },
+        "extensions_AzureNetworkWatcherExtension_name": {
+            "defaultValue": "AzureNetworkWatcherExtension",
+            "type": "string"
+        },
+        "securityRules_default_allow_rdp_name": {
+            "defaultValue": "default-allow-rdp",
+            "type": "string"
+        },
+        "virtualMachines_dpss1_id": {
+            "defaultValue": "/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Compute/disks/dpss1_OsDisk_1_d5ca02665983467db455f50589059d61",
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Compute/availabilitySets/ASss'.",
+            "type": "Microsoft.Compute/availabilitySets",
+            "sku": {
+                "name": "Aligned"
+            },
+            "name": "[parameters('availabilitySets_ASss_name')]",
+            "apiVersion": "2018-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "platformUpdateDomainCount": 2,
+                "platformFaultDomainCount": 2,
+                "virtualMachines": [
+                    {
+                        "id": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_dpss1_name'))]"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_dpss1_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Compute/virtualMachines/dpss1'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_dpss1_name')]",
+            "apiVersion": "2018-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_ASss_name'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_dpss1_name'),'_OsDisk_1_d5ca02665983467db455f50589059d61')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "id": "[parameters('virtualMachines_dpss1_id')]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_dpss1_name')]",
+                    "adminUsername": "danne",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_dpss1248_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https', '://', parameters('storageAccounts_dpstartstopdiag969_name'), '.blob.core.windows.net', '/')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_ASss_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_dpss1248_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_dpstartstopdiag969_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/networkInterfaces/dpss1248'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_dpss1248_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "74adfc1e-1029-4b80-8d41-01d4ad69667a",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "etag": "W/\"4674b5c2-ad8a-47d0-ad75-946c67f36623\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.3.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_dpss1_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_spvnet_name'), parameters('subnets_dpsubnet_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_dpss1_nsg_name'))]"
+                },
+                "primary": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_dpss1_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_spvnet_name'), parameters('subnets_dpsubnet_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_dpss1_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/networkSecurityGroups/dpss1-nsg'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_dpss1_nsg_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "b8460846-9361-4767-acff-5a3aafc50c4c",
+                "securityRules": [
+                    {
+                        "name": "MongoDB",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "27017",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "default-allow-rdp",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "etag": "W/\"e19bd5d1-2c50-4a4a-b106-6d06ad85e52b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/publicIPAddresses/azureFirewalls-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "name": "[parameters('publicIPAddresses_azureFirewalls_ip_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "northeurope",
+            "tags": {
+                "Nynasdemo": "prod"
+            },
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "0044b36a-8305-4a61-b527-148d3d1e0499",
+                "ipAddress": "52.142.114.93",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/publicIPAddresses/dpss1-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "name": "[parameters('publicIPAddresses_dpss1_ip_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "36b81784-8c11-40e5-a378-39730fa6471e",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/virtualNetworks/firewallvnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_firewallvnet_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "northeurope",
+            "tags": {
+                "Nynasdemo": "prod"
+            },
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "163c04a0-9bdd-4dfb-ba2d-828729af6a47",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "AzureFirewallSubnet",
+                        "etag": "W/\"d0ba820d-3092-40c9-a9e3-2b9152f77573\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/virtualNetworks/spvnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_spvnet_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "310eb2e2-97a0-4546-9662-1069aa319d20",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.3.0.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "dpsubnet",
+                        "etag": "W/\"33d6b23f-7db4-44f1-a1ea-5d145ed9cc3a\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.3.0.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Storage/storageAccounts/dpstartstopdiag969'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_dpstartstopdiag969_name')]",
+            "apiVersion": "2018-07-01",
+            "location": "northeurope",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Compute/virtualMachines/dpss1/extensions/AzureNetworkWatcherExtension'.",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualMachines_dpss1_name'), '/', parameters('extensions_AzureNetworkWatcherExtension_name'))]",
+            "apiVersion": "2018-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.NetworkWatcher",
+                "type": "NetworkWatcherAgentWindows",
+                "typeHandlerVersion": "1.4"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_dpss1_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/networkSecurityGroups/dpss1-nsg/securityRules/MongoDB'.",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "name": "[concat(parameters('networkSecurityGroups_dpss1_nsg_name'), '/', parameters('securityRules_MongoDB_name'))]",
+            "apiVersion": "2018-02-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "27017",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_dpss1_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/networkSecurityGroups/dpss1-nsg/securityRules/default-allow-rdp'.",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "name": "[concat(parameters('networkSecurityGroups_dpss1_nsg_name'), '/', parameters('securityRules_default_allow_rdp_name'))]",
+            "apiVersion": "2018-02-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 1000,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_dpss1_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/virtualNetworks/firewallvnet/subnets/AzureFirewallSubnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_firewallvnet_name'), '/', parameters('subnets_AzureFirewallSubnet_name'))]",
+            "apiVersion": "2018-02-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_firewallvnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e747235b-0052-412e-ac0b-123f566b1c7e/resourceGroups/dpstartstop/providers/Microsoft.Network/virtualNetworks/spvnet/subnets/dpsubnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_spvnet_name'), '/', parameters('subnets_dpsubnet_name'))]",
+            "apiVersion": "2018-02-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.3.0.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_spvnet_name'))]"
+            ]
+        }
+    ]
+}

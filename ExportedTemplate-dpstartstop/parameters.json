@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "availabilitySets_ASss_name": {
+            "value": null
+        },
+        "virtualMachines_dpss1_name": {
+            "value": null
+        },
+        "virtualNetworks_spvnet_name": {
+            "value": null
+        },
+        "networkInterfaces_dpss1248_name": {
+            "value": null
+        },
+        "publicIPAddresses_dpss1_ip_name": {
+            "value": null
+        },
+        "virtualNetworks_firewallvnet_name": {
+            "value": null
+        },
+        "networkSecurityGroups_dpss1_nsg_name": {
+            "value": null
+        },
+        "storageAccounts_dpstartstopdiag969_name": {
+            "value": null
+        },
+        "publicIPAddresses_azureFirewalls_ip_name": {
+            "value": null
+        },
+        "subnets_dpsubnet_name": {
+            "value": null
+        },
+        "securityRules_MongoDB_name": {
+            "value": null
+        },
+        "subnets_AzureFirewallSubnet_name": {
+            "value": null
+        },
+        "extensions_AzureNetworkWatcherExtension_name": {
+            "value": null
+        },
+        "securityRules_default_allow_rdp_name": {
+            "value": null
+        },
+        "virtualMachines_dpss1_id": {
+            "value": null
+        }
+    }
+}
